@@ -15,9 +15,10 @@ void menu();
 void startup(ArrayADT *);
 void updateValue(ArrayADT *);
 void deleteValue(ArrayADT *);
+void impress(ArrayADT);
 
-void set(int *, int, int);
-void delete(int *, int, int);
+int set(ArrayADT *, int, int);
+int delete(ArrayADT *, int);
 
 int main()
 {
@@ -32,21 +33,21 @@ int main()
 
     do
     {
-        menu();
-
         switch (selection)
         {
         case 1:
-            // updateValue(&arr);
+            impress(arr);
             break;
         case 2:
-            // deleteValue(&arr);
+            updateValue(&arr);
             break;
         }
 
+        menu();
+
         printf("#: ");
         scanf("%i", &selection);
-    } while (selection != 3);
+    } while (selection != 4);
 
     printf("Goodbye 🎮");
 
@@ -55,9 +56,10 @@ int main()
 
 void menu()
 {
-    printf("1. Set \n");
-    printf("2. Delete \n");
-    printf("3. Exit \n");
+    printf("1. Print \n");
+    printf("2. Set \n");
+    printf("3. Delete \n");
+    printf("4. Exit \n");
 }
 
 void startup(ArrayADT *arr)
@@ -93,4 +95,87 @@ void startup(ArrayADT *arr)
     arr->size = size;
 
     system("clear");
+}
+
+void updateValue(ArrayADT *arr)
+{
+    int index = NO_VALUE;
+    int value = NO_VALUE;
+
+    int *data = arr->data;
+    int size = arr->size;
+    int length = arr->length;
+
+    printf(" 🚩 Assigning Index 🚩 \n");
+
+    do
+    {
+        printf("Index -> ");
+        scanf("%i", &index);
+
+        if (index <= 0)
+        {
+            printf("Index cannot be equal or lower than zero. \n");
+        }
+        else if (index > length)
+        {
+            printf("Index cannot be higher than the length. \n");
+        }
+    } while (index == NO_VALUE || index <= 0 || index > length);
+
+    printf("🚩 Assigning Value 🚩\n");
+
+    do
+    {
+        printf("Value (-100000 to 100000) -> ");
+        scanf("%i", &value);
+
+        if (value < -100000 || value > 100000)
+        {
+            printf("Value out of bounds! Please try again.\n");
+        }
+    } while (value < -100000 || value > 100000);
+
+    int result = set(arr, (index - 1), value);
+
+    if (result == -1)
+    {
+        printf("❌ Error! There was an error updating the index");
+    }
+    else
+    {
+        printf("✅ Value updated!");
+    }
+
+    printf("\n");
+}
+
+void deleteValue(ArrayADT *arr)
+{
+}
+
+void impress(ArrayADT arr)
+{
+    for (int i = 0; i < arr.size; i++)
+    {
+        printf("| %i | ", arr.data[i]);
+    }
+
+    printf("\n");
+}
+
+int set(ArrayADT *arr, int index, int value)
+{
+    int prev = arr->data[index];
+
+    arr->data[index] = value;
+
+    printf("Prev: %i -> New: %i", prev, value);
+
+    return 0;
+}
+
+int delete(ArrayADT *arr, int index)
+{
+    return -1;
 }
