@@ -13,12 +13,16 @@ typedef struct
 
 void menu();
 void startup(ArrayADT *);
-void updateValue(ArrayADT *);
-void deleteValue(ArrayADT *);
 void impress(ArrayADT);
+
+void setValue(ArrayADT *);
+void deleteValue(ArrayADT *);
+void insertValue(ArrayADT *);
 
 int set(ArrayADT *, int, int);
 int delete(ArrayADT *, int);
+
+void rearrange(ArrayADT *);
 
 int main()
 {
@@ -39,7 +43,13 @@ int main()
             impress(arr);
             break;
         case 2:
-            updateValue(&arr);
+            setValue(&arr);
+            break;
+        case 3:
+            deleteValue(&arr);
+            break;
+        case 4:
+            rearrange(&arr);
             break;
         }
 
@@ -47,7 +57,7 @@ int main()
 
         printf("#: ");
         scanf("%i", &selection);
-    } while (selection != 4);
+    } while (selection != 5);
 
     printf("Goodbye 🎮");
 
@@ -59,7 +69,8 @@ void menu()
     printf("1. Print \n");
     printf("2. Set \n");
     printf("3. Delete \n");
-    printf("4. Exit \n");
+    printf("4. Rearrange \n");
+    printf("5. Exit \n");
 }
 
 void startup(ArrayADT *arr)
@@ -97,7 +108,7 @@ void startup(ArrayADT *arr)
     system("clear");
 }
 
-void updateValue(ArrayADT *arr)
+void setValue(ArrayADT *arr)
 {
     int index = NO_VALUE;
     int value = NO_VALUE;
@@ -140,11 +151,11 @@ void updateValue(ArrayADT *arr)
 
     if (result == -1)
     {
-        printf("❌ Error! There was an error updating the index");
+        printf("❌ Error! There was an error updating the index \n");
     }
     else
     {
-        printf("✅ Value updated!");
+        printf("✅ Value updated! \n");
     }
 
     printf("\n");
@@ -152,13 +163,53 @@ void updateValue(ArrayADT *arr)
 
 void deleteValue(ArrayADT *arr)
 {
+    int index = NO_VALUE;
+    int lenght = arr->length;
+
+    do
+    {
+        printf("Index (1 to %i) -> ", lenght);
+        scanf("%i", &index);
+
+        if (index <= 0 || index > lenght)
+        {
+            printf("❌ Error! Index is out of the bonds! \n");
+            printf("Insert the value again \n");
+        }
+        else
+        {
+            printf("✅ Value updated!");
+        }
+    } while (index <= 0 || index > lenght);
+
+    printf("🚩 Deleting the value 🚩");
+
+    int realIndex = index - 1;
+
+    int result = delete(arr, realIndex);
+
+    if (result == -1)
+    {
+        printf("❌ Deletion failed! \n");
+    }
+    else
+    {
+        printf("✅ Deletion successful \n");
+    }
 }
 
 void impress(ArrayADT arr)
 {
     for (int i = 0; i < arr.size; i++)
     {
-        printf("| %i | ", arr.data[i]);
+        if (arr.data[i] == NO_VALUE)
+        {
+            printf("| NULL |");
+        }
+        else
+        {
+            printf("| %i | ", arr.data[i]);
+        }
     }
 
     printf("\n");
@@ -170,12 +221,52 @@ int set(ArrayADT *arr, int index, int value)
 
     arr->data[index] = value;
 
-    printf("Prev: %i -> New: %i", prev, value);
-
     return 0;
 }
 
 int delete(ArrayADT *arr, int index)
 {
-    return -1;
+    int valueToDelete = arr->data[index];
+
+    if (valueToDelete == NO_VALUE)
+    {
+        return -1;
+    }
+
+    arr->data[index] = NO_VALUE;
+
+    return 0;
+}
+
+void rearrange(ArrayADT *arr)
+{
+    int replacerCheckpoint = 0;
+
+    for (int i = 0; i < arr->length; i++)
+    {
+        int value = arr->data[i];
+
+        if (value == NO_VALUE && replacerCheckpoint == 0)
+        {
+            int j = i + 1;
+
+            while (j < arr->length)
+            {
+                int replacer = arr->data[j];
+
+                if (j == arr->length - 1)
+                {
+                    replacerCheckpoint = -1;
+                }
+
+                if (replacer != NO_VALUE)
+                {
+                    arr->data[i] = replacer;
+                    arr->data[j] = NO_VALUE;
+                }
+
+                j++;
+            }
+        }
+    }
 }
